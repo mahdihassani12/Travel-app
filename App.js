@@ -1,10 +1,11 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Home from './components/Home';
 import Details from './components/Details';
 import Liked from './components/Liked';
 import Profile from './components/Profile';
 import colors from './assets/colors/colors';
+import * as SQLite from 'expo-sqlite';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -18,7 +19,16 @@ MaterialCommunityIcons.loadFont();
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const db = SQLite.openDatabase("profile");
+
 const TabNavigator = () => {
+
+  useEffect(() => {
+    db.transaction(tx => {
+        tx.executeSql('create table if not exists data (id integer primary key autoincrement, name text, phone text, address text);',[],()=> console.log('table created.'));
+    });
+  });
+
   return (
     <Tab.Navigator 
       tabBarOptions={{
@@ -64,14 +74,14 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="TabNavigator"
+          name="Tab Navigator"
           component={TabNavigator}
-          options={{headerShown: false}}
+          options={{headerShown: true}}
         />
         <Stack.Screen
           name="Details"
           component={Details}
-          options={{headerShown: false}}
+          options={{headerShown: true}}
         />
       </Stack.Navigator>
     </NavigationContainer>
